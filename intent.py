@@ -1,8 +1,13 @@
 """
 Intent Parser for AirGuard AI system.
 
-This module converts natural language commands into structured Intent objects
-using regex pattern matching and parameter extraction.
+Two-stage pipeline:
+  1. LLM classification (gpt-4o-mini) — used when OPENAI_API_KEY is set.
+     Handles natural language, ambiguous phrasing, and non-English inputs.
+  2. Regex fallback — used when LLM is unavailable or returns "unknown".
+     Deterministic, zero-latency, no external dependency.
+
+The rest of the system (agent, enforcer, executor) is unchanged.
 """
 
 import re
@@ -44,7 +49,8 @@ class IntentParser:
                 'patterns': [
                     r'\b(generate|create|make|produce)\s+(a\s+)?(pollution\s+)?report\b',
                     r'\breport\s+(for|about|on)\b',
-                    r'\bgenerate\s+pollution\s+report\b'
+                    r'\bgenerate\s+pollution\s+report\b',
+                    r'\breport\b',
                 ],
                 'base_confidence': 0.9
             },
@@ -53,9 +59,11 @@ class IntentParser:
                 'patterns': [
                     r'\b(analyze|analyse|check|examine|review)\s+(aqi|air\s+quality)\b',
                     r'\b(aqi|air\s+quality)\s+(analysis|check|data)\b',
-                    r'\b(analyze|analyse|check)\s+(pollution|air)\b'
+                    r'\b(analyze|analyse|check)\s+(pollution|air)\b',
+                    # Short natural queries: "Delhi pollution", "pollution in Delhi", "Delhi AQI"
+                    r'\b(pollution|aqi|air\s+quality)\b',
                 ],
-                'base_confidence': 0.9
+                'base_confidence': 0.75
             },
             {
                 'action': 'send_alert',
@@ -83,7 +91,46 @@ class IntentParser:
                     r'\b(penalty|penalize)\b'
                 ],
                 'base_confidence': 0.95
-            }
+            },
+            # ── New actions ────────────────────────────────────────────────
+            {
+                'action': 'fetch_live_aqi',
+                'patterns': [
+                    r'\b(fetch|get|show|live|current|real.?time)\s+(live\s+)?(aqi|air\s+quality)\b',
+                    r'\b(what.?s|what\s+is)\s+(the\s+)?(current|live|today.?s)?\s*(aqi|air\s+quality)\b',
+                    r'\blive\s+(pollution|aqi|air)\b',
+                ],
+                'base_confidence': 0.9
+            },
+            {
+                'action': 'compare_cities',
+                'patterns': [
+                    r'\bcompare\b',
+                    r'\b(comparison|versus|vs\.?)\b',
+                    r'\bwhich\s+(city|place)\s+(is|has)\s+(better|worse|cleaner|more\s+polluted)\b',
+                    r'\brank\s+(cities|pollution|aqi)\b',
+                ],
+                'base_confidence': 0.9
+            },
+            {
+                'action': 'pollution_trend',
+                'patterns': [
+                    r'\b(pollution|aqi)\s+trend\b',
+                    r'\btrend\s+(of|in|for)\s+(pollution|aqi|air)\b',
+                    r'\b(how\s+is|is\s+the)\s+(pollution|aqi|air\s+quality)\s+(trending|changing)\b',
+                ],
+                'base_confidence': 0.88
+            },
+            {
+                'action': 'health_advisory',
+                'patterns': [
+                    r'\b(health\s+advisory|health\s+advice|health\s+risk)\b',
+                    r'\b(is\s+it\s+safe|safe\s+to\s+(go\s+outside|exercise|run))\b',
+                    r'\b(what\s+should\s+i|should\s+i)\s+(wear|do|avoid)\b',
+                    r'\bhealth\s+(impact|effect|warning)\b',
+                ],
+                'base_confidence': 0.88
+            },
         ]
         
         # Compile regex patterns for efficiency
@@ -107,52 +154,58 @@ class IntentParser:
     
     def parse_intent(self, command: str) -> Intent:
         """
-        Parse natural language command into structured Intent object.
-        
-        This method:
-        1. Normalizes the input command
-        2. Matches against action patterns
-        3. Extracts relevant parameters
-        4. Calculates confidence score
-        5. Returns structured Intent object
-        
-        Args:
-            command: Natural language command string
-            
-        Returns:
-            Intent object with action, parameters, timestamp, and confidence
-            
-        Example:
-            >>> parser = IntentParser()
-            >>> intent = parser.parse_intent("Analyze AQI in Delhi")
-            >>> intent.action
-            'analyze_aqi'
-            >>> intent.parameters['location']
-            'Delhi'
+        Parse a natural language command into a structured Intent object.
+
+        Stage 1 — LLM (if OPENAI_API_KEY is set):
+            Calls classify_intent() from llm_intent.py.
+            If the LLM returns a confident, known action -> use it.
+            Special cases handled here (not routed to executor):
+              - "greeting" -> returns a greeting Intent directly
+              - "unknown"  -> falls through to regex
+
+        Stage 2 — Regex fallback:
+            Original keyword/pattern matching. Always available.
+
+        Parameters are always extracted by the regex layer regardless of
+        which stage classified the action.
         """
         if not command or not isinstance(command, str):
             return self._create_error_intent(command, "Empty or invalid command")
-        
-        # Normalize command
-        normalized_command = command.strip()
-        
-        if not normalized_command:
+
+        normalized = command.strip()
+        if not normalized:
             return self._create_error_intent(command, "Empty command after normalization")
-        
-        # Match action patterns
-        action, confidence = self._match_action(normalized_command)
-        
-        # Extract parameters based on action type
-        parameters = self._extract_parameters(normalized_command, action)
-        
-        # Create and return intent
+
+        # ── Stage 1: LLM classification ───────────────────────────────────────
+        action, confidence = self._try_llm(normalized)
+
+        # ── Stage 2: Regex fallback if LLM didn't resolve ────────────────────
+        if action == "unknown" or action == "error":
+            action, confidence = self._match_action(normalized)
+
+        # ── Extract parameters (always regex-based) ───────────────────────────
+        parameters = self._extract_parameters(normalized, action)
+
         return Intent(
             action=action,
             parameters=parameters,
             timestamp=datetime.now(),
             user_command=command,
-            confidence=confidence
+            confidence=confidence,
         )
+
+    def _try_llm(self, command: str) -> Tuple[str, float]:
+        """
+        Attempt LLM-based classification.
+        Returns ("unknown", 0.0) if LLM is disabled or fails.
+        """
+        try:
+            from llm_intent import classify_intent
+            action, confidence = classify_intent(command)
+            return action, confidence
+        except Exception:
+            # Never crash the pipeline due to LLM issues
+            return ("unknown", 0.0)
     
     def _match_action(self, command: str) -> Tuple[str, float]:
         """
@@ -258,7 +311,13 @@ class IntentParser:
             filename = self._extract_filename(command)
             if filename:
                 parameters['filename'] = filename
-        
+
+        # Extract cities list for compare_cities
+        if action == 'compare_cities':
+            cities = self._extract_cities(command)
+            if cities:
+                parameters['cities'] = cities
+
         return parameters
     
     def _extract_location(self, command: str) -> Optional[str]:
@@ -372,6 +431,19 @@ class IntentParser:
         
         return message.strip()
     
+    def _extract_cities(self, command: str) -> list:
+        """
+        Extract multiple city names from a compare command.
+        Returns a list of matched city names (2+ for a meaningful comparison).
+        """
+        known_cities = [
+            'Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata',
+            'Hyderabad', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow',
+            'Noida', 'Gurgaon',
+        ]
+        found = [c for c in known_cities if c.lower() in command.lower()]
+        return found if len(found) >= 2 else found
+
     def _create_error_intent(self, command: str, error_message: str) -> Intent:
         """
         Create an error intent for invalid or unparseable commands.

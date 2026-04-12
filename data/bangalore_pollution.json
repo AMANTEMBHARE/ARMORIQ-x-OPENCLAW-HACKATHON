@@ -1,0 +1,12 @@
+{
+    "location": "Bangalore",
+    "timestamp": "2024-01-15T10:00:00",
+    "data": [
+        {"date": "2024-01-15", "time": "10:00", "aqi": 92,  "pm25": 46, "pm10": 68,  "no2": 26, "so2": 8,  "co": 0.55, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "11:00", "aqi": 98,  "pm25": 49, "pm10": 72,  "no2": 28, "so2": 9,  "co": 0.60, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "12:00", "aqi": 105, "pm25": 53, "pm10": 79,  "no2": 31, "so2": 10, "co": 0.65, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "13:00", "aqi": 101, "pm25": 51, "pm10": 75,  "no2": 29, "so2": 9,  "co": 0.62, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "14:00", "aqi": 96,  "pm25": 48, "pm10": 71,  "no2": 27, "so2": 8,  "co": 0.58, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "15:00", "aqi": 94,  "pm25": 47, "pm10": 69,  "no2": 27, "so2": 8,  "co": 0.57, "category": "Moderate"}
+    ]
+}

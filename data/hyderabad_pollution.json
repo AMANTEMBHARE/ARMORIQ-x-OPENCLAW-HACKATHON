@@ -1,0 +1,12 @@
+{
+    "location": "Hyderabad",
+    "timestamp": "2024-01-15T10:00:00",
+    "data": [
+        {"date": "2024-01-15", "time": "10:00", "aqi": 118, "pm25": 59, "pm10": 92,  "no2": 35, "so2": 12, "co": 0.73, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "11:00", "aqi": 124, "pm25": 62, "pm10": 97,  "no2": 37, "so2": 13, "co": 0.77, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "12:00", "aqi": 129, "pm25": 65, "pm10": 101, "no2": 39, "so2": 14, "co": 0.80, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "13:00", "aqi": 125, "pm25": 63, "pm10": 98,  "no2": 38, "so2": 13, "co": 0.78, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "14:00", "aqi": 120, "pm25": 60, "pm10": 94,  "no2": 36, "so2": 12, "co": 0.74, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "15:00", "aqi": 116, "pm25": 58, "pm10": 90,  "no2": 34, "so2": 12, "co": 0.72, "category": "Moderate"}
+    ]
+}

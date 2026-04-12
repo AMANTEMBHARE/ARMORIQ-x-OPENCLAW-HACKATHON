@@ -1,0 +1,12 @@
+{
+    "location": "Lucknow",
+    "timestamp": "2024-01-15T10:00:00",
+    "data": [
+        {"date": "2024-01-15", "time": "10:00", "aqi": 212, "pm25": 106, "pm10": 188, "no2": 58, "so2": 20, "co": 1.25, "category": "Very Unhealthy"},
+        {"date": "2024-01-15", "time": "11:00", "aqi": 224, "pm25": 112, "pm10": 199, "no2": 62, "so2": 21, "co": 1.32, "category": "Very Unhealthy"},
+        {"date": "2024-01-15", "time": "12:00", "aqi": 235, "pm25": 118, "pm10": 210, "no2": 65, "so2": 23, "co": 1.38, "category": "Very Unhealthy"},
+        {"date": "2024-01-15", "time": "13:00", "aqi": 228, "pm25": 114, "pm10": 203, "no2": 63, "so2": 22, "co": 1.34, "category": "Very Unhealthy"},
+        {"date": "2024-01-15", "time": "14:00", "aqi": 219, "pm25": 110, "pm10": 195, "no2": 60, "so2": 21, "co": 1.28, "category": "Very Unhealthy"},
+        {"date": "2024-01-15", "time": "15:00", "aqi": 215, "pm25": 108, "pm10": 191, "no2": 59, "so2": 20, "co": 1.26, "category": "Very Unhealthy"}
+    ]
+}

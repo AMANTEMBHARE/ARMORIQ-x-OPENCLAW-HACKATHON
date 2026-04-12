@@ -51,6 +51,48 @@
             }
         },
         {
+            "action": "fetch_live_aqi",
+            "allowed": true,
+            "reason": "Fetching live AQI is a read-only monitoring operation",
+            "description": "Returns current AQI reading for a city from live or mock source",
+            "constraints": {
+                "allowed_cities": [
+                    "Delhi", "Mumbai", "Bangalore", "Chennai", "Kolkata",
+                    "Hyderabad", "Pune", "Ahmedabad", "Jaipur", "Lucknow"
+                ],
+                "max_requests_per_minute": 30
+            }
+        },
+        {
+            "action": "compare_cities",
+            "allowed": true,
+            "reason": "City comparison is a read-only analytical operation",
+            "description": "Compares AQI across multiple cities and returns a ranked summary",
+            "constraints": {
+                "max_cities_per_request": 10,
+                "max_requests_per_minute": 20
+            }
+        },
+        {
+            "action": "pollution_trend",
+            "allowed": true,
+            "reason": "Trend analysis is a read-only monitoring operation",
+            "description": "Analyses historical AQI trend for a location",
+            "constraints": {
+                "max_time_range_days": 365,
+                "max_requests_per_minute": 20
+            }
+        },
+        {
+            "action": "health_advisory",
+            "allowed": true,
+            "reason": "Health advisory is informational and read-only",
+            "description": "Returns health guidance based on current AQI levels",
+            "constraints": {
+                "max_requests_per_minute": 30
+            }
+        },
+        {
             "action": "shutdown_factory",
             "allowed": false,
             "reason": "Critical infrastructure control requires human authorization",
@@ -89,7 +131,11 @@
         "per_action_limits": {
             "generate_report": 20,
             "analyze_aqi": 30,
-            "send_alert": 10
+            "send_alert": 10,
+            "fetch_live_aqi": 30,
+            "compare_cities": 20,
+            "pollution_trend": 20,
+            "health_advisory": 30
         }
     },
     "file_operations": {

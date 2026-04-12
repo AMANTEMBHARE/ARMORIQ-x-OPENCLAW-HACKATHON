@@ -1,0 +1,12 @@
+{
+    "location": "Chennai",
+    "timestamp": "2024-01-15T10:00:00",
+    "data": [
+        {"date": "2024-01-15", "time": "10:00", "aqi": 108, "pm25": 54, "pm10": 80,  "no2": 31, "so2": 10, "co": 0.68, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "11:00", "aqi": 115, "pm25": 58, "pm10": 86,  "no2": 34, "so2": 11, "co": 0.72, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "12:00", "aqi": 119, "pm25": 60, "pm10": 90,  "no2": 36, "so2": 12, "co": 0.75, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "13:00", "aqi": 112, "pm25": 56, "pm10": 84,  "no2": 33, "so2": 11, "co": 0.70, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "14:00", "aqi": 109, "pm25": 55, "pm10": 82,  "no2": 32, "so2": 10, "co": 0.69, "category": "Moderate"},
+        {"date": "2024-01-15", "time": "15:00", "aqi": 106, "pm25": 53, "pm10": 79,  "no2": 31, "so2": 10, "co": 0.67, "category": "Moderate"}
+    ]
+}

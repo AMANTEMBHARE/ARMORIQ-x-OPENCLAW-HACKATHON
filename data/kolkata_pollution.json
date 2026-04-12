@@ -1,0 +1,12 @@
+{
+    "location": "Kolkata",
+    "timestamp": "2024-01-15T10:00:00",
+    "data": [
+        {"date": "2024-01-15", "time": "10:00", "aqi": 189, "pm25": 95,  "pm10": 142, "no2": 52, "so2": 17, "co": 1.05, "category": "Unhealthy"},
+        {"date": "2024-01-15", "time": "11:00", "aqi": 198, "pm25": 99,  "pm10": 148, "no2": 55, "so2": 18, "co": 1.10, "category": "Unhealthy"},
+        {"date": "2024-01-15", "time": "12:00", "aqi": 210, "pm25": 105, "pm10": 158, "no2": 59, "so2": 20, "co": 1.18, "category": "Very Unhealthy"},
+        {"date": "2024-01-15", "time": "13:00", "aqi": 205, "pm25": 103, "pm10": 154, "no2": 57, "so2": 19, "co": 1.15, "category": "Very Unhealthy"},
+        {"date": "2024-01-15", "time": "14:00", "aqi": 195, "pm25": 98,  "pm10": 146, "no2": 54, "so2": 18, "co": 1.08, "category": "Unhealthy"},
+        {"date": "2024-01-15", "time": "15:00", "aqi": 192, "pm25": 96,  "pm10": 144, "no2": 53, "so2": 17, "co": 1.06, "category": "Unhealthy"}
+    ]
+}

@@ -1,3 +1,13 @@
+# AirGuard AI 🚀
+
+AI-powered pollution monitoring agent with Telegram integration.
+
+## Features
+- LLM-based intent classification (Groq)
+- AQI analysis
+- Policy enforcement system
+- Telegram bot interface
+
 # 🌍 AirGuard AI - Autonomous Pollution Monitoring System
 
 **An AI-powered agent for pollution monitoring in Delhi with secure policy enforcement and OpenClaw integration.**
