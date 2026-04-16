@@ -294,3 +294,23 @@ This project is created for hackathon demonstration purposes.
 ---
 
 **Built with ❤️ for cleaner air in Delhi**
+
+
+
+# Clone repo
+git clone https://github.com/your-username/airguard-ai.git
+cd airguard-ai
+
+# Create virtual environment (recommended)
+python -m venv venv
+venv\Scripts\activate   # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Setup environment variables
+cp .env.example .env
+# Add your API keys inside .env
+
+# Run bot
+python telegram_bot.py
